@@ -9,7 +9,7 @@
 general {
     interval = 1
     colors = true
-    color_good="#20c176"
+    color_good="#237986"
     color_degraded="#ffc107"
     color_bad="#dc3645"
 }
@@ -21,9 +21,8 @@ order += "memory"
 order += "tztime local"
 
 tztime local {
-    format = " %A, %b %d, %I:%M %p   "
+    format = " %I:%M " 
 }
-
 
 disk "/" {
      format = " %avail "
