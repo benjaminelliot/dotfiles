@@ -12,12 +12,12 @@
 set $mod Mod4
 
 # SET COLOR ALIASES
-set $bg.color	#1d1d1d
-set $fg.color	#d1d1d1
-set $bd.color	#d1d1d1
-set $alt.color	#585858
-set $alt.color2	#ae95c7
-set $warn.color	#c795ae
+set $bg.color	#232c31
+set $fg.color	#9ea7a6
+set $bd.color	#3f4944
+set $alt.color	#2a5491
+set $alt.color2	#237986
+set $warn.color	#a03b1e
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -126,7 +126,7 @@ set $ws9 "9"
 set $ws10 "10"
 
 # open applications on specific workspaces
-assign [class="Firefox"] 2:$ws2
+assign [class="firefox"] $ws2
 
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
