@@ -31,8 +31,8 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
 
 require("lazy").setup({
     {
-        "catppuccin/nvim", name = "catppuccin", priority = 1000,
-        opts = { flavour = "macchiato" },
+        "rebelot/kanagawa.nvim", name = "kanagawa", priority = 1000,
+        opts = { theme = "wave" },
     },
     {
         'nvim-telescope/telescope.nvim',
@@ -51,7 +51,7 @@ require("lazy").setup({
         'nvim-lualine/lualine.nvim',
         dependencies = { 'nvim-tree/nvim-web-devicons' },
         opts = {
-            options = { theme = 'catppuccin', icons_enabled = true },
+            options = { theme = 'kanagawa', icons_enabled = true },
         },
     },
     {
@@ -109,7 +109,7 @@ require("lazy").setup({
 }
 })
 
-vim.cmd.colorscheme("catppuccin")
+vim.cmd.colorscheme("kanagawa")
 
 -- Other keymaps
 vim.keymap.set('n', '<leader>bn', ':bnext<CR>')
