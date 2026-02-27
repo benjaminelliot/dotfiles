@@ -23,6 +23,28 @@ vim.opt.expandtab = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.autoread = true
+vim.opt.swapfile = false
+vim.opt.exrc = true
+
+-- Load .nvim.lua by walking up from the current file's directory
+local _loaded_nvim_lua = {}
+vim.api.nvim_create_autocmd('BufEnter', {
+    callback = function()
+        local dir = vim.fn.expand('%:p:h')
+        while dir ~= '/' do
+            local config = dir .. '/.nvim.lua'
+            if vim.fn.filereadable(config) == 1 and not _loaded_nvim_lua[config] then
+                _loaded_nvim_lua[config] = true
+                local content = vim.secure.read(config)
+                if content then load(content)() end
+                break
+            end
+            local parent = vim.fn.fnamemodify(dir, ':h')
+            if parent == dir then break end
+            dir = parent
+        end
+    end,
+})
 vim.opt.updatetime = 500
 vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
     pattern = "*",
@@ -42,7 +64,26 @@ require("lazy").setup({
         'nvim-treesitter/nvim-treesitter',
         build = ':TSUpdate',
     },
-    { 'tpope/vim-fugitive' },
+    { 'tpope/vim-fugitive', lazy = false, priority = 200 },
+    {
+        'mg979/vim-visual-multi',
+        init = function()
+            vim.g.VM_maps = {
+                ['Find Under']         = '<C-n>',
+                ['Find Subword Under'] = '<C-n>',
+                ['Select All']         = '<C-M-n>',
+            }
+            -- Also try to map Alt+J if the terminal supports it
+            vim.g.VM_custom_remaps = { ['<M-j>'] = '<C-n>' }
+        end,
+    },
+    {
+        'lewis6991/gitsigns.nvim',
+        opts = {
+            current_line_blame = true,
+            current_line_blame_opts = { delay = 500 },
+        },
+    },
     {
         'nvim-tree/nvim-web-devicons',
         opts = { default = true },
@@ -116,10 +157,48 @@ vim.keymap.set('n', '<leader>bn', ':bnext<CR>')
 vim.keymap.set('n', '<leader>bp', ':bprev<CR>')
 vim.keymap.set('n', '<leader>be', ':enew<CR>')
 vim.keymap.set('n', '<leader>bd', ':bdelete<CR>')
+vim.keymap.set('n', '<leader>yp', function()
+    local loc = vim.fn.expand('%:p') .. ':' .. vim.fn.line('.')
+    vim.fn.setreg('+', loc)
+    vim.notify('Copied: ' .. loc)
+end, { desc = 'Copy file path and line number' })
 
 
 -- Fugitive keymaps
-vim.keymap.set('n', '<leader>gv', ':vertical Git<CR>')
+vim.keymap.set('n', '<leader>gv', ':vertical Git status<CR>')
+
+-- Test runner keymaps (configured per-project via .nvim.lua)
+local function run_test(filter_method)
+    if not (_G.LazTest and _G.LazTest.cmd) then
+        vim.notify('No test runner configured for this project', vim.log.levels.WARN)
+        return
+    end
+    local rel_path = vim.fn.expand('%:p'):gsub('^' .. _G.LazTest.base_path, '')
+    local cmd = _G.LazTest.cmd .. ' ' .. rel_path
+    if filter_method then
+        local line = vim.fn.search('function test', 'bnW')
+        local method = line ~= 0 and vim.fn.getline(line):match('function%s+(%w+)')
+        if method then cmd = cmd .. ' --filter ' .. method end
+    end
+    vim.cmd('botright split | resize 20 | terminal ' .. cmd)
+end
+
+vim.keymap.set('n', '<leader>tf', function() run_test(false) end, { desc = 'Run test file' })
+vim.keymap.set('n', '<leader>tm', function() run_test(true)  end, { desc = 'Run test method' })
+
+-- Gitsigns keymaps
+local gs = require('gitsigns')
+vim.keymap.set('n', '<leader>gb', gs.blame_line,                              { desc = 'Git blame line' })
+vim.keymap.set('n', '<leader>gB', function() gs.blame_line({ full = true }) end, { desc = 'Git blame line (full)' })
+vim.keymap.set('n', '<leader>gd', function()
+    local file = vim.fn.expand('%:p')
+    local line = vim.fn.line('.')
+    local sha = vim.fn.system('git blame -L ' .. line .. ',' .. line .. ' --porcelain ' .. vim.fn.shellescape(file) .. ' | head -1 | cut -d" " -f1')
+    sha = sha:gsub('%s+', '')
+    if #sha == 40 then
+        vim.cmd('Git show ' .. sha)
+    end
+end, { desc = 'Git show commit diff' })
 
 -- Telescope keymaps
 local builtin = require('telescope.builtin')
