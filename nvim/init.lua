@@ -1,7 +1,3 @@
-vim.opt.clipboard = "unnamedplus"
-vim.opt.termguicolors = true
-vim.g.have_nerd_font = true
-
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -15,6 +11,10 @@ vim.opt.rtp:prepend(lazypath)
 -- This is also a good place to setup other settings (vim.opt)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
+
+vim.opt.clipboard = "unnamedplus"
+vim.opt.termguicolors = true
+vim.g.have_nerd_font = true
 
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -95,6 +95,7 @@ require("lazy").setup({
             options = { theme = 'kanagawa', icons_enabled = true },
         },
     },
+    { 'nvim-mini/mini.nvim', version = false },
     {
         'saghen/blink.cmp',
         -- optional: provides snippets for the snippet source
@@ -225,6 +226,12 @@ vim.keymap.set('n', '<leader>gd', function()
         vim.cmd('Git show ' .. sha)
     end
 end, { desc = 'Git show commit diff' })
+
+-- Mini setup
+require('mini.files').setup({})
+
+-- Mini keymaps
+vim.keymap.set('n', '<leader>sf', function() MiniFiles.open() end, { desc = 'File picker' })
 
 -- Telescope keymaps
 local builtin = require('telescope.builtin')
