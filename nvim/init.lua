@@ -149,6 +149,11 @@ require("lazy").setup({
           opts_extend = { "sources.default" }
     },
     {
+        "chentoast/marks.nvim",
+        event = "VeryLazy",
+        opts = {},
+    },
+    {
       'stevearc/conform.nvim',
       opts = {},
     }
