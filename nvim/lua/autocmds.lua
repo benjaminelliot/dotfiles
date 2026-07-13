@@ -8,7 +8,11 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
 vim.api.nvim_create_autocmd('FileType', {
     pattern = { 'php', 'lua', 'javascript', 'typescript', 'html', 'css', 'json' },
     callback = function(ev)
-        vim.treesitter.start(ev.buf)
+        local filetype = vim.bo[ev.buf].filetype
+        local lang = vim.treesitter.language.get_lang(filetype) or filetype
+        if #vim.api.nvim_get_runtime_file('parser/' .. lang .. '.so', false) > 0 then
+            vim.treesitter.start(ev.buf, lang)
+        end
     end,
 })
 

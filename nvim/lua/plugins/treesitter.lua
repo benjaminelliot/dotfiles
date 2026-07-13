@@ -1,10 +1,13 @@
 return {
     {
         'nvim-treesitter/nvim-treesitter',
+        branch = 'master',
+        lazy = false,
         build = ':TSUpdate',
-        main = 'nvim-treesitter.config',
+        main = 'nvim-treesitter.configs',
         opts = {
             ensure_installed = { 'php', 'lua', 'javascript', 'typescript', 'html', 'css', 'json' },
+            auto_install = true,
             highlight = { enable = true },
             incremental_selection = {
                 enable = true,

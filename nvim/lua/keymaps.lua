@@ -9,6 +9,18 @@ vim.keymap.set('n', '<leader>yp', function()
 end, { desc = 'Copy file path and line number' })
 
 -- Test runner keymaps (configured per-project via .nvim.lua)
+local function current_test_method()
+    local view = vim.fn.winsaveview()
+    local line = vim.fn.search([[\v^\s*(public|protected|private)?\s*function\s+\w+]], 'bnW')
+    vim.fn.winrestview(view)
+
+    if line == 0 then
+        return nil
+    end
+
+    return vim.fn.getline(line):match('function%s+([%w_]+)')
+end
+
 local function run_test(filter_method)
     if not _G.LazTest then
         vim.notify('No test runner configured for this project', vim.log.levels.WARN)
@@ -34,8 +46,7 @@ local function run_test(filter_method)
     local rel_path = vim.fn.expand('%:p'):gsub('^' .. config.base_path, '')
     local cmd = config.cmd .. ' ' .. rel_path
     if filter_method then
-        local line = vim.fn.search('function test', 'bnW')
-        local method = line ~= 0 and vim.fn.getline(line):match('function%s+(%w+)')
+        local method = current_test_method()
         if method then cmd = cmd .. ' --filter ' .. method end
     end
     vim.cmd('botright split | resize 20 | terminal ' .. cmd)
