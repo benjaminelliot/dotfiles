@@ -4,6 +4,11 @@ return {
     config = function()
         require('mini.files').setup({})
         vim.keymap.set('n', '<leader>sf', function() MiniFiles.open() end, { desc = 'File picker' })
+        vim.keymap.set('n', '<leader>sd', function()
+            vim.ui.input({ prompt = 'Directory: ', completion = 'dir' }, function(input)
+                if input then MiniFiles.open(input) end
+            end)
+        end, { desc = 'File picker (choose dir)' })
 
         require('mini.surround').setup()
 
