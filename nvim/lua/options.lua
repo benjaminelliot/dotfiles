@@ -19,3 +19,4 @@ vim.opt.swapfile = false
 vim.opt.exrc = true
 
 vim.opt.updatetime = 500
+vim.opt.wrap = false
