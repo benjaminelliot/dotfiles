@@ -2,6 +2,23 @@ vim.keymap.set('n', '<leader>bn', ':bnext<CR>')
 vim.keymap.set('n', '<leader>bp', ':bprev<CR>')
 vim.keymap.set('n', '<leader>be', ':enew<CR>')
 vim.keymap.set('n', '<leader>bd', ':bdelete<CR>')
+
+-- Open a terminal on the left at 20% width, keep focus on the right
+vim.keymap.set('n', '<leader>ts', function()
+    local width = math.floor(vim.o.columns * 0.20)
+    vim.cmd('topleft ' .. width .. 'vsplit | terminal')
+    vim.cmd('wincmd l')
+end, { desc = 'Terminal split (left 20%)' })
+
+-- Window navigation
+vim.keymap.set('n', '<C-h>', '<C-w>h', { desc = 'Move to left pane' })
+vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = 'Move to right pane' })
+vim.keymap.set('n', '<C-j>', '<C-w>j', { desc = 'Move to pane below' })
+vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = 'Move to pane above' })
+vim.keymap.set('t', '<C-h>', '<C-\\><C-n><C-w>h', { desc = 'Move to left pane (terminal)' })
+vim.keymap.set('t', '<C-l>', '<C-\\><C-n><C-w>l', { desc = 'Move to right pane (terminal)' })
+vim.keymap.set('t', '<C-j>', '<C-\\><C-n><C-w>j', { desc = 'Move to pane below (terminal)' })
+vim.keymap.set('t', '<C-k>', '<C-\\><C-n><C-w>k', { desc = 'Move to pane above (terminal)' })
 vim.keymap.set('n', '<leader>yp', function()
     local loc = vim.fn.expand('%:p') .. ':' .. vim.fn.line('.')
     vim.fn.setreg('+', loc)

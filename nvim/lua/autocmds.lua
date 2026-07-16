@@ -4,6 +4,16 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
     command = "checktime",
 })
 
+-- Open a terminal on the left at 20% width on startup
+vim.api.nvim_create_autocmd('VimEnter', {
+    once = true,
+    callback = function()
+        local width = math.floor(vim.o.columns * 0.30)
+        vim.cmd('topleft ' .. width .. 'vsplit | terminal')
+        vim.cmd('wincmd l')
+    end,
+})
+
 -- Ensure treesitter parses the buffer on open so plugins like mini.ai can query it
 vim.api.nvim_create_autocmd('FileType', {
     pattern = { 'php', 'lua', 'javascript', 'typescript', 'html', 'css', 'json' },
