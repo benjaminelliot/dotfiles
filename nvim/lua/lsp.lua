@@ -2,7 +2,7 @@
 vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(ev)
         local opts = { buffer = ev.buf }
-        vim.keymap.set('n', 'gd',         vim.lsp.buf.definition,     vim.tbl_extend('force', opts, { desc = 'Go to definition' }))
+        vim.keymap.set('n', 'gd',         function() require('telescope.builtin').lsp_definitions() end, vim.tbl_extend('force', opts, { desc = 'Go to definition' }))
         vim.keymap.set('n', 'gD',         vim.lsp.buf.declaration,    vim.tbl_extend('force', opts, { desc = 'Go to declaration' }))
         vim.keymap.set('n', 'gI',         vim.lsp.buf.implementation, vim.tbl_extend('force', opts, { desc = 'Go to implementation' }))
         vim.keymap.set('n', 'gT',         vim.lsp.buf.type_definition,vim.tbl_extend('force', opts, { desc = 'Go to type definition' }))
