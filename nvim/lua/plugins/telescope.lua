@@ -13,7 +13,15 @@ return {
         vim.keymap.set('n', '<leader>fg', lga.live_grep_args,  { desc = 'Live grep' })
         vim.keymap.set('n', '<leader>fF', function() builtin.find_files({ hidden = true, no_ignore = true }) end, { desc = 'Find files (all)' })
         vim.keymap.set('n', '<leader>fG', function() lga.live_grep_args({ additional_args = { '--no-ignore', '--hidden' } }) end, { desc = 'Live grep (all)' })
-        vim.keymap.set('n', '<leader>fb', builtin.buffers,     { desc = 'Buffers' })
+        vim.keymap.set('n', '<leader>fb', function()
+            builtin.buffers({
+                attach_mappings = function(_, map)
+                    map('n', '<C-d>', require('telescope.actions').delete_buffer)
+                    map('i', '<C-d>', require('telescope.actions').delete_buffer)
+                    return true
+                end,
+            })
+        end, { desc = 'Buffers' })
         vim.keymap.set('n', '<leader>fh', builtin.help_tags,   { desc = 'Help tags' })
         vim.keymap.set('n', 'gr',         builtin.lsp_references,       { desc = 'References' })
         vim.keymap.set('n', '<leader>fs', builtin.lsp_document_symbols,  { desc = 'Document symbols' })
