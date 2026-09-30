@@ -5,14 +5,14 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
 })
 
 -- Open a terminal on the left at 20% width on startup
-vim.api.nvim_create_autocmd('VimEnter', {
-    once = true,
-    callback = function()
-        local width = math.floor(vim.o.columns * 0.30)
-        vim.cmd('topleft ' .. width .. 'vsplit | terminal')
-        vim.cmd('wincmd l')
-    end,
-})
+-- vim.api.nvim_create_autocmd('VimEnter', {
+--     once = true,
+--     callback = function()
+--         local width = math.floor(vim.o.columns * 0.30)
+--         vim.cmd('topleft ' .. width .. 'vsplit | terminal')
+--         vim.cmd('wincmd l')
+--     end,
+-- })
 
 -- Ensure treesitter parses the buffer on open so plugins like mini.ai can query it
 vim.api.nvim_create_autocmd('FileType', {
@@ -23,6 +23,22 @@ vim.api.nvim_create_autocmd('FileType', {
         if #vim.api.nvim_get_runtime_file('parser/' .. lang .. '.so', false) > 0 then
             vim.treesitter.start(ev.buf, lang)
         end
+    end,
+})
+
+-- In Fugitive buffers, open the working tree version of the file under cursor
+vim.api.nvim_create_autocmd('FileType', {
+    pattern = { 'fugitive', 'git' },
+    callback = function()
+        vim.keymap.set('n', '<leader>e', function()
+            local cfile = vim.fn.expand('<cfile>')
+            cfile = cfile:gsub('^[ab]/', '') -- strip git diff a/ b/ prefix
+            if vim.fn.filereadable(cfile) == 1 then
+                vim.cmd('edit ' .. vim.fn.fnameescape(cfile))
+            else
+                vim.notify('File not found: ' .. cfile, vim.log.levels.WARN)
+            end
+        end, { buffer = true, desc = 'Edit working tree file under cursor' })
     end,
 })
 
